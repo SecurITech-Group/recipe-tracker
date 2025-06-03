@@ -489,58 +489,63 @@ function canMake(recipe) {
 }
 
 function renderRecipes() {
-  const showUnlearned = document.getElementById('show-unlearned').checked;
-  const list = document.getElementById('recipe-list');
-  list.innerHTML = '';
+    const showUnlearned = document.getElementById('show-unlearned').checked;
+    const showAll = document.getElementById('show-all').checked;
+    const list = document.getElementById('recipe-list');
+    list.innerHTML = '';
 
-  for (const [name, data] of Object.entries(recipes)) {
-    const isLearned = learned.has(name);
-    if (showUnlearned && isLearned) continue;
-    if (!canMake(data)) continue;
+    for (const [name, data] of Object.entries(recipes)) {
+        const isLearned = learned.has(name);
 
-    const card = document.createElement('div');
-    card.className = 'recipe-card';
+        if (showUnlearned && isLearned) continue;
+        if (!showAll && !canMake(data)) continue;
 
-    const img = document.createElement('img');
-    img.src = data.image;
-    img.alt = name;
-    img.className = 'recipe-image';
-    card.appendChild(img);
+        const card = document.createElement('div');
+        card.className = 'recipe-card';
 
-    const details = document.createElement('div');
-    const title = document.createElement('h3');
-    title.textContent = name;
-    details.appendChild(title);
+        const img = document.createElement('img');
+        img.src = data.image;
+        img.alt = name;
+        img.className = 'recipe-image';
+        card.appendChild(img);
 
-    const ul = document.createElement('ul');
-    for (const [ing, amt] of Object.entries(data.ingredients)) {
-      const li = document.createElement('li');
-      const icon = document.createElement('img');
-      icon.src = `icons/${ing}.png`;
-      icon.alt = ing;
-      icon.className = 'icon';
-      li.appendChild(icon);
-      li.append(` ${ing} x${amt}`);
-      ul.appendChild(li);
+        const details = document.createElement('div');
+        const title = document.createElement('h3');
+        title.textContent = name;
+        details.appendChild(title);
+
+        const ul = document.createElement('ul');
+        for (const [ing, amt] of Object.entries(data.ingredients)) {
+            const li = document.createElement('li');
+            const icon = document.createElement('img');
+            icon.src = `icons/${ing}.png`;
+            icon.alt = ing;
+            icon.className = 'icon';
+            li.appendChild(icon);
+            li.append(` ${ing} x${amt}`);
+            ul.appendChild(li);
+        }
+
+        details.appendChild(ul);
+
+        if (!isLearned) {
+            const btn = document.createElement('button');
+            btn.textContent = 'Mark as Learned';
+            btn.onclick = () => {
+                learned.add(name);
+                saveLearned();
+                renderRecipes();
+            };
+            details.appendChild(btn);
+        }
+
+        card.appendChild(details);
+        list.appendChild(card);
     }
-
-    details.appendChild(ul);
-
-    if (!isLearned) {
-      const btn = document.createElement('button');
-      btn.textContent = 'Mark as Learned';
-      btn.onclick = () => {
-        learned.add(name);
-        saveLearned();
-        renderRecipes();
-      };
-      details.appendChild(btn);
-    }
-
-    card.appendChild(details);
-    list.appendChild(card);
-  }
 }
+
+document.getElementById('show-all').addEventListener('change', renderRecipes);
+document.getElementById('show-unlearned').addEventListener('change', renderRecipes);
 
 document.addEventListener('DOMContentLoaded', () => {
   loadLearned();
