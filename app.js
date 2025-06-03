@@ -203,13 +203,13 @@ const recipes = {
         },
         image: "images/grandmas-secret.png"
     },
-    "Hearty Omelete": {
+    "Hearty Omelet": {
         ingredients: {
             egg: 1,
             "any meat": 1,
             tomato: 1
         },
-        image: "images/hearty-omelete.png"
+        image: "images/hearty-omelet.png"
     },
     "Honeyed Apples": {
         ingredients: {
